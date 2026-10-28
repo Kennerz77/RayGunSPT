@@ -1,0 +1,1333 @@
+{
+ "m_GameObject": {
+  "m_FileID": 0,
+  "m_PathID": 0
+ },
+ "m_Enabled": 1,
+ "m_Script": {
+  "m_FileID": 1,
+  "m_PathID": -3082203544527767022
+ },
+ "m_Name": "weapon_izhmeh_mr43_12g_StaticData",
+ "_stateHashToEventsCollection": [
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "FiringBullet",
+     "_functionNameHash": -58181185,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "FireEnd",
+     "_functionNameHash": -1677976749,
+     "Enabled": 1,
+     "_time": 0.5985401272773743,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "Holster",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 2,
+      "StringParam": "",
+      "ParamType": 1
+     },
+     "_functionName": "ThirdAction",
+     "_functionNameHash": -612501071,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "WeapOut",
+     "_functionNameHash": 1174204865,
+     "Enabled": 1,
+     "_time": 0.9566366672515869,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 1,
+      "StringParam": "1",
+      "ParamType": 1
+     },
+     "_functionName": "ThirdAction",
+     "_functionNameHash": -612501071,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "WeapIn",
+     "_functionNameHash": -224219248,
+     "Enabled": 1,
+     "_time": 1.0,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 1,
+      "StringParam": "1",
+      "ParamType": 1
+     },
+     "_functionName": "ThirdAction",
+     "_functionNameHash": -612501071,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "Draw",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.30344828963279724,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "WeapIn",
+     "_functionNameHash": -224219248,
+     "Enabled": 1,
+     "_time": 0.9367521405220032,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "IdleStart",
+     "_functionNameHash": 198060848,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "FiringBullet",
+     "_functionNameHash": -58181185,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "FiringBullet",
+     "_functionNameHash": -58181185,
+     "Enabled": 1,
+     "_time": 0.25854992866516113,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "AmmoInChamber",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "FireEnd",
+     "_functionNameHash": -1677976749,
+     "Enabled": 1,
+     "_time": 0.4987834692001343,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "UnloadOne",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.14827586710453033,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 2.0,
+       "IntValue": 0,
+       "ParameterName": "ChamberIndexWithShell",
+       "ConditionParamType": 1,
+       "ConditionMode": 3
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "UnloadBooth",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.14827589690685272,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 1.0,
+       "IntValue": 0,
+       "ParameterName": "ChamberIndexWithShell",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "ShellThrow",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4482758641242981,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "ShellEject",
+     "_functionNameHash": -1819682913,
+     "Enabled": 1,
+     "_time": 0.748275876045227,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "RemoveShell",
+     "_functionNameHash": 211630556,
+     "Enabled": 1,
+     "_time": 0.8275862336158752,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 1.0,
+       "IntValue": 0,
+       "ParameterName": "ShellsInWeapon",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "RemoveShell",
+     "_functionNameHash": 211630556,
+     "Enabled": 1,
+     "_time": 0.8396551609039307,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "ShellsInWeapon",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "UnloadBooth",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.23010380566120148,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 1.0,
+       "IntValue": 0,
+       "ParameterName": "ChamberIndex",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "UnloadOne",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.23010380566120148,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 2.0,
+       "IntValue": 0,
+       "ParameterName": "ChamberIndex",
+       "ConditionParamType": 1,
+       "ConditionMode": 3
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "TakeAway",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.5913792848587036,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "DelAmmoChamber",
+     "_functionNameHash": -945517627,
+     "Enabled": 1,
+     "_time": 0.8339160680770874,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "AmmoInChamber",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "MagHide",
+     "_functionNameHash": 798565163,
+     "Enabled": 1,
+     "_time": 0.8551723957061768,
+     "EventConditions": [
+      {
+       "BoolValue": 1,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "LoadOne",
+       "ConditionParamType": 2,
+       "ConditionMode": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "ShellOutRig",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.01206896547228098,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "MagShow",
+     "_functionNameHash": 1551431816,
+     "Enabled": 1,
+     "_time": 0.12068965286016464,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "LoadOne",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.40344828367233276,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 2.0,
+       "IntValue": 0,
+       "ParameterName": "ChamberIndex",
+       "ConditionParamType": 1,
+       "ConditionMode": 3
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "LoadBooth",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.40344831347465515,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 1.0,
+       "IntValue": 0,
+       "ParameterName": "ChamberIndex",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "AddAmmoInChamber",
+     "_functionNameHash": -508605542,
+     "Enabled": 1,
+     "_time": 0.8989952206611633,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "StartUtilityOperation",
+     "_functionNameHash": 1134400241,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandHit",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.1068965494632721,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelLock",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.1784989833831787,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelOpen",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.21298174560070038,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelClose",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.800000011920929,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandHit",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.8864097595214844,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": []
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "RemoveShell",
+     "_functionNameHash": 211630556,
+     "Enabled": 1,
+     "_time": 0.8503437042236328,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 1.0,
+       "IntValue": 0,
+       "ParameterName": "ShellsInWeapon",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "RemoveShell",
+     "_functionNameHash": 211630556,
+     "Enabled": 1,
+     "_time": 0.9508196711540222,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "ShellsInWeapon",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOff",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.23247863352298737,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOn",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4512820541858673,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "RemoveShell",
+     "_functionNameHash": 211630556,
+     "Enabled": 1,
+     "_time": 0.6228710412979126,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 1.0,
+       "IntValue": 0,
+       "ParameterName": "ShellsInWeapon",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "RemoveShell",
+     "_functionNameHash": 211630556,
+     "Enabled": 1,
+     "_time": 0.9508196711540222,
+     "EventConditions": [
+      {
+       "BoolValue": 0,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "ShellsInWeapon",
+       "ConditionParamType": 1,
+       "ConditionMode": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOn",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.3268112242221832,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "ModChanged",
+     "_functionNameHash": 1199378086,
+     "Enabled": 1,
+     "_time": 0.5002644062042236,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOff",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.6927551627159119,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "ModSwitch",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4003378450870514,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 4
+     },
+     "_functionName": "UseProp",
+     "_functionNameHash": -1376281788,
+     "Enabled": 1,
+     "_time": 0.5,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 1,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 4
+     },
+     "_functionName": "UseProp",
+     "_functionNameHash": -1376281788,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "SndDropBackpack",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "OnBackpackDrop",
+     "_functionNameHash": 224242560,
+     "Enabled": 1,
+     "_time": 0.25,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": []
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "StartUtilityOperation",
+     "_functionNameHash": 1134400241,
+     "Enabled": 1,
+     "_time": 0.0,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOff",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.03651115670800209,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandHit",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.28397566080093384,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOn",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.9168357253074646,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOff",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.036332178860902786,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelLock",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4036511182785034,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelOpen",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4665314257144928,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelClose",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.42596349120140076,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandHit",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.6024340987205505,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "AddAmmoInMag",
+     "_functionNameHash": -1583670125,
+     "Enabled": 1,
+     "_time": 0.9031504988670349,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "MagHide",
+     "_functionNameHash": 798565163,
+     "Enabled": 1,
+     "_time": 0.9248251914978027,
+     "EventConditions": [
+      {
+       "BoolValue": 1,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "Discharge",
+       "ConditionParamType": 2,
+       "ConditionMode": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelClose",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.5415821671485901,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "AddAmmoInMag",
+     "_functionNameHash": -1583670125,
+     "Enabled": 1,
+     "_time": 0.6826137900352478,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "",
+      "ParamType": 0
+     },
+     "_functionName": "MagHide",
+     "_functionNameHash": 798565163,
+     "Enabled": 1,
+     "_time": 0.6907563209533691,
+     "EventConditions": [
+      {
+       "BoolValue": 1,
+       "FloatValue": 0.0,
+       "IntValue": 0,
+       "ParameterName": "Discharge",
+       "ConditionParamType": 2,
+       "ConditionMode": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOff",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.06034482643008232,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandOn",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.7275862097740173,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "HandHit",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.2862069010734558,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelLock",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4120689928531647,
+     "EventConditions": []
+    },
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "BarrelOpen",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.4655173122882843,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": [
+    {
+     "Parameter": {
+      "BoolParam": 0,
+      "FloatParam": 0.0,
+      "IntParam": 0,
+      "StringParam": "Trigger",
+      "ParamType": 3
+     },
+     "_functionName": "Sound",
+     "_functionNameHash": 1554795451,
+     "Enabled": 1,
+     "_time": 0.08965517580509186,
+     "EventConditions": []
+    }
+   ]
+  },
+  {
+   "_animationEvents": []
+  }
+ ],
+ "_stateHashToLActionSetups": [
+  {
+   "StartThreshold": 0.8999999761581421,
+   "LayerWeight": {
+    "m_Curve": [
+     {
+      "time": 0.0,
+      "value": 1.0,
+      "inSlope": 0.0,
+      "outSlope": 0.0,
+      "weightedMode": 0,
+      "inWeight": 0.0,
+      "outWeight": 0.0
+     },
+     {
+      "time": 0.8999999761581421,
+      "value": 1.0,
+      "inSlope": 0.0,
+      "outSlope": 1.0,
+      "weightedMode": 0,
+      "inWeight": 0.0,
+      "outWeight": 0.0
+     },
+     {
+      "time": 1.0,
+      "value": 0.0,
+      "inSlope": 0.5,
+      "outSlope": 0.0,
+      "weightedMode": 0,
+      "inWeight": 0.0,
+      "outWeight": 0.0
+     }
+    ],
+    "m_PreInfinity": 2,
+    "m_PostInfinity": 2,
+    "m_RotationOrder": 4
+   },
+   "_stateHash": 0
+  },
+  {
+   "StartThreshold": 0.8999999761581421,
+   "LayerWeight": {
+    "m_Curve": [
+     {
+      "time": 0.0,
+      "value": 0.0,
+      "inSlope": 0.0,
+      "outSlope": 0.0,
+      "weightedMode": 0,
+      "inWeight": 0.3333333432674408,
+      "outWeight": 0.3333333432674408
+     },
+     {
+      "time": 1.0,
+      "value": 1.0,
+      "inSlope": 0.0,
+      "outSlope": 0.0,
+      "weightedMode": 0,
+      "inWeight": 0.3333333432674408,
+      "outWeight": 0.3333333432674408
+     }
+    ],
+    "m_PreInfinity": 2,
+    "m_PostInfinity": 2,
+    "m_RotationOrder": 4
+   },
+   "_stateHash": 0
+  }
+ ]
+}

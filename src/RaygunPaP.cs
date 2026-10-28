@@ -1,0 +1,286 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using BepInEx;
+using BepInEx.Bootstrap;
+using EFT.InventoryLogic;
+using HarmonyLib;
+using PaPHideoutModule;
+using UnityEngine;
+
+namespace Raygun
+{
+    /// <summary>
+    /// Everything the Ray Gun asks of Pack-a-Punch. PaP is optional: callers go through <see cref="RaygunPaP"/>, which
+    /// only touches this class (and so only loads PaPHideoutModule.dll) when PaP is installed.
+    /// </summary>
+    internal static class RaygunPaPBridge
+    {
+        private static Func<Item, bool> _onInfused;
+        private static bool _looked;
+
+        /// <summary>
+        /// Porter's X2: infused and out of the machine. PaP's records say a gun is infused the moment the server agrees,
+        /// while it's still going through the machine; its camo waits until the gun is back out, and so do we.
+        /// </summary>
+        public static bool IsInfused(Item item)
+        {
+            if (!_looked)
+            {
+                _looked = true;
+                Type camo = AccessTools.TypeByName("PaPHideoutModule.PaPCamo");
+                MethodInfo on = camo == null ? null : AccessTools.Method(camo, "OnInfusedGun", new[] { typeof(Item) });
+                _onInfused = on == null ? null : (Func<Item, bool>)Delegate.CreateDelegate(typeof(Func<Item, bool>), on);
+            }
+            return _onInfused != null ? _onInfused(item) : PaPApi.IsInfused(item);
+        }
+
+        /// <summary>What the machine added to the gun's worth: its fee, which depends on the mode picked in PaP.</summary>
+        public static int InfusedFeeRub => PaPApi.BonusesActive ? 500_000 : 5_000;
+
+        public static void Setup(Harmony harmony, GameObject host)
+        {
+            host.AddComponent<RaygunGlowKeeper>();
+            // The pickup sound is for taking the gun at the machine's prompt, not for it coming out (see RaygunGlowKeeper)
+            PaPApi.WeaponUpgraded += gun => RaygunGlowKeeper.Awaiting = RaygunIds.Is(gun);
+            PaPApi.RegisterName(RaygunIds.Weapon, RaygunIds.UpgradedName, "X2 Ray Gun");
+            AudioClip shot = Wav.Load(Path.Combine(RaygunPlugin.Dir, "sounds", "ray_shot_f.wav"));
+            if (shot != null)
+                PaPApi.RegisterShotSound(RaygunIds.Weapon, shot);
+            else
+                RaygunPlugin.Log.LogWarning("Ray Gun shot sound for Pack-a-Punch missing: PaP's own plays");
+
+            // Every model PaP paints (or un-paints) gets its glow parts to match
+            Type camo = AccessTools.TypeByName("PaPHideoutModule.PaPCamo");
+            MethodInfo apply = camo == null ? null : AccessTools.Method(camo, "Apply", new[] { typeof(GameObject), typeof(Item), typeof(bool?) });
+            if (apply != null)
+                harmony.Patch(apply, postfix: new HarmonyMethod(typeof(RaygunPaPBridge).GetMethod(nameof(ApplyPostfix), BindingFlags.Static | BindingFlags.NonPublic)));
+            else
+                RaygunPlugin.Log.LogWarning("PaP camo hook not found: an upgraded Ray Gun keeps its green glow");
+        }
+
+        private static void ApplyPostfix(GameObject go, Item item, bool? force)
+        {
+            try
+            {
+                if (go == null || (item != null && !RaygunIds.Is(item)))
+                    return;
+                // No item: the machine's display gun going in or out, plain
+                bool upgraded = item != null && (force ?? IsInfused(item));
+                RaygunGlow.Set(go, upgraded);
+                // Photo models (forced) go straight back to the pool; the rest are kept right (RaygunGlowKeeper)
+                if (force == null && item != null)
+                    RaygunGlowKeeper.Models[go] = item;
+            }
+            catch (Exception e)
+            {
+                RaygunPlugin.Log.LogWarning($"Ray Gun upgraded glow skipped: {e.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Twice a second: every Ray Gun model PaP has painted gets its glow parts checked against its gun. PaP paints a
+    /// model while the game is still building it, and a model re-drawn from the pool, so the one-off swap when PaP
+    /// applies its camo could land on a model with no parts yet (or be undone), leaving the blue tube, the white sight
+    /// and the green dial on a Porter's X2 until the gun was drawn a few times.
+    /// </summary>
+    internal class RaygunGlowKeeper : MonoBehaviour
+    {
+        public static readonly Dictionary<GameObject, Item> Models = new Dictionary<GameObject, Item>();
+
+        /// <summary>A Ray Gun has just come out of the machine and the take prompt is up (or was).</summary>
+        public static bool Awaiting;
+
+        private float _next;
+        private object _machine;
+        private FieldInfo _canTake, _taken;
+        private bool _wasCanTake;
+
+        private void Update()
+        {
+            WatchTake();
+            if (Time.unscaledTime < _next)
+                return;
+            _next = Time.unscaledTime + 0.5f;
+            foreach (GameObject dead in Models.Keys.Where(go => go == null).ToList())
+                Models.Remove(dead);
+            foreach (var pair in Models)
+            {
+                try
+                {
+                    RaygunGlow.Set(pair.Key, RaygunPaPBridge.IsInfused(pair.Value));
+                }
+                catch (Exception e)
+                {
+                    RaygunPlugin.Log.LogWarning($"Ray Gun glow check skipped: {e.Message}");
+                }
+            }
+        }
+
+        // PaP keeps its take prompt's state in private fields of its plugin: the prompt is up while _canTake, and the
+        // player took the gun if _takeRequested is set by the time it closes. Left alone, the machine eats the gun
+        // and nothing plays.
+        private float _awaitingSince;
+        private bool _gaveUp;
+
+        private void WatchTake()
+        {
+            if (!Awaiting)
+            {
+                _awaitingSince = 0f;
+                _wasCanTake = false;
+                return;
+            }
+            if (_awaitingSince == 0f)
+                _awaitingSince = Time.unscaledTime;
+            // Not waiting for ever: the prompt is over a minute at most
+            if (_gaveUp || Time.unscaledTime - _awaitingSince > 60f)
+            {
+                Awaiting = false;
+                return;
+            }
+            if (_machine == null)
+            {
+                // PaP's own plugin object (its fields hold the prompt's state), looked up once
+                _machine = Chainloader.PluginInfos.TryGetValue("com.kennerz.paphideoutmodule", out PluginInfo info) ? info.Instance : null;
+                Type plugin = _machine?.GetType();
+                _canTake = plugin == null ? null : AccessTools.Field(plugin, "_canTake");
+                _taken = plugin == null ? null : AccessTools.Field(plugin, "_takeRequested");
+                if (_machine == null || _canTake == null || _taken == null)
+                {
+                    _gaveUp = true;
+                    RaygunPlugin.Log.LogWarning("Pack-a-Punch take prompt not found: no pickup sound at the machine");
+                    return;
+                }
+            }
+            bool canTake = (bool)_canTake.GetValue(_machine);
+            if (_wasCanTake && !canTake)
+            {
+                if ((bool)_taken.GetValue(_machine))
+                    RaygunPickup.Play();
+                Awaiting = false;
+            }
+            _wasCanTake = canTake;
+        }
+    }
+
+    /// <summary>Pack-a-Punch hooks that are safe to call with or without PaP installed.</summary>
+    internal static class RaygunPaP
+    {
+        public static readonly bool Installed = Chainloader.PluginInfos.ContainsKey("com.kennerz.paphideoutmodule");
+
+        public static void Setup(Harmony harmony, GameObject host)
+        {
+            if (Installed)
+                RaygunPaPBridge.Setup(harmony, host);
+        }
+
+        /// <summary>A Pack-a-Punched gun (Porter's X2). Never without PaP.</summary>
+        public static bool IsInfused(Item item) => Installed && item != null && RaygunPaPBridge.IsInfused(item);
+
+        public static int InfusedFeeRub => Installed ? RaygunPaPBridge.InfusedFeeRub : 0;
+    }
+
+    /// <summary>
+    /// The Pack-a-Punched Ray Gun's glow: red tube, red dial and a red sight. Its "..._up" materials ride in the
+    /// weapon bundle on a switched-off renderer (rg_upgraded_materials); they're swapped in by name, and back out.
+    /// </summary>
+    internal static class RaygunGlow
+    {
+        private const string Holder = "rg_upgraded_materials";
+        private const string Up = "_up";
+
+        private const string PlainHolder = "rg_plain_materials";
+
+        /// <summary>A material's name without the " (Instance)" the game adds when it copies one.</summary>
+        private static string Bare(string name) => name.EndsWith(" (Instance)") ? name.Substring(0, name.Length - " (Instance)".Length) : name;
+
+        private static Dictionary<string, Material> Named(Renderer holder) => holder == null
+            ? new Dictionary<string, Material>()
+            : holder.sharedMaterials.Where(m => m != null).GroupBy(m => m.name).ToDictionary(g => g.Key, g => g.First());
+
+        public static void Set(GameObject model, bool upgraded)
+        {
+            Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
+            Renderer holder = renderers.FirstOrDefault(r => r.name == Holder);
+            if (holder == null)
+                return; // not a Ray Gun model
+            // Both sets ride in the model itself, so a pooled model can always be put back either way
+            Dictionary<string, Material> ups = Named(holder);
+            Dictionary<string, Material> plains = Named(renderers.FirstOrDefault(r => r.name == PlainHolder));
+            foreach (Renderer r in renderers)
+            {
+                if (r == holder || r.name == PlainHolder)
+                    continue;
+                Material[] mats = r.sharedMaterials;
+                bool changed = false;
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    Material m = mats[i];
+                    if (m == null)
+                        continue;
+                    string name = Bare(m.name);
+                    bool isUp = name.EndsWith(Up);
+                    string plainName = isUp ? name.Substring(0, name.Length - Up.Length) : name;
+                    if (upgraded && !isUp && ups.TryGetValue(plainName + Up, out Material up))
+                    {
+                        mats[i] = up;
+                        changed = true;
+                    }
+                    else if (!upgraded && isUp && plains.TryGetValue(plainName, out Material plain))
+                    {
+                        mats[i] = plain;
+                        changed = true;
+                    }
+                }
+                if (changed)
+                    r.sharedMaterials = mats;
+            }
+        }
+    }
+
+    /// <summary>A PCM WAV file (8/16/24/32-bit integer or 32-bit float) as an AudioClip.</summary>
+    internal static class Wav
+    {
+        public static AudioClip Load(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+            byte[] d = File.ReadAllBytes(path);
+            int channels = 1, rate = 44100, bits = 16, format = 1, pos = 12;
+            while (pos + 8 <= d.Length)
+            {
+                string id = System.Text.Encoding.ASCII.GetString(d, pos, 4);
+                int size = BitConverter.ToInt32(d, pos + 4);
+                if (id == "fmt ")
+                {
+                    format = BitConverter.ToInt16(d, pos + 8);
+                    channels = BitConverter.ToInt16(d, pos + 10);
+                    rate = BitConverter.ToInt32(d, pos + 12);
+                    bits = BitConverter.ToInt16(d, pos + 22);
+                }
+                else if (id == "data")
+                {
+                    int bytes = bits / 8, count = Math.Min(size, d.Length - pos - 8) / bytes;
+                    var samples = new float[count];
+                    for (int i = 0, o = pos + 8; i < count; i++, o += bytes)
+                    {
+                        samples[i] = format == 3 ? BitConverter.ToSingle(d, o)
+                            : bits == 8 ? (d[o] - 128) / 128f
+                            : bits == 16 ? BitConverter.ToInt16(d, o) / 32768f
+                            : bits == 24 ? ((d[o] << 8 | d[o + 1] << 16 | d[o + 2] << 24) >> 8) / 8388608f
+                            : BitConverter.ToInt32(d, o) / 2147483648f;
+                    }
+                    AudioClip clip = AudioClip.Create(Path.GetFileNameWithoutExtension(path), count / channels, channels, rate, false);
+                    clip.SetData(samples, 0);
+                    return clip;
+                }
+                pos += 8 + size + (size & 1);
+            }
+            return null;
+        }
+    }
+}
