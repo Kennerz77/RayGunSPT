@@ -37,6 +37,8 @@ namespace Raygun
             return _onInfused != null ? _onInfused(item) : PaPApi.IsInfused(item);
         }
 
+        public static bool IsOrigins(Item item) => PaPApi.IsOriginsGun(item);
+
         /// <summary>What the machine added to the gun's worth: its fee, which depends on the mode picked in PaP.</summary>
         public static int InfusedFeeRub => PaPApi.BonusesActive ? 500_000 : 5_000;
 
@@ -46,6 +48,19 @@ namespace Raygun
             // The pickup sound is for taking the gun at the machine's prompt, not for it coming out (see RaygunGlowKeeper)
             PaPApi.WeaponUpgraded += gun => RaygunGlowKeeper.Awaiting = RaygunIds.Is(gun);
             PaPApi.RegisterName(RaygunIds.Weapon, RaygunIds.UpgradedName, "X2 Ray Gun");
+            // The X2 fires faster than the plain Ray Gun
+            PaPApi.RegisterBonuses(RaygunIds.Weapon, new PaPBonusSet { FireRate = 1.35f });
+            // Its body is "plastic" and its bars "metal" in PaP's eyes; both are painted
+            PaPApi.KeepMaterialsPlain("raygun", "rg_cell");
+            PaPApi.KeepOriginsPlain("rg_cell"); // cold fusion cells never get a camo
+            // Origins camo: the red body takes the blue crystal, the bars and handles the metal plating
+            // Its red takes the crystal, its black and grey the metal plating (the gold print is its own overlay)
+            PaPApi.SetOriginsLook("rg_plate", false); // the body's black and grey faces (cut out at build time); its red is the crystal
+            PaPApi.SetOriginsLook("plastic", true);
+            PaPApi.SetOriginsLook("metal", false);
+            // The dial's needle, the side vents, the knob and the switch are metal too (they share the body's material)
+            foreach (string part in new[] { "knob", "switch" })
+                PaPApi.SetOriginsPartLook(part, false);
             AudioClip shot = Wav.Load(Path.Combine(RaygunPlugin.Dir, "sounds", "ray_shot_f.wav"));
             if (shot != null)
                 PaPApi.RegisterShotSound(RaygunIds.Weapon, shot);
@@ -170,7 +185,9 @@ namespace Raygun
     /// <summary>Pack-a-Punch hooks that are safe to call with or without PaP installed.</summary>
     internal static class RaygunPaP
     {
-        public static readonly bool Installed = Chainloader.PluginInfos.ContainsKey("com.kennerz.paphideoutmodule");
+        // PaP 2.0.0 or newer: older ones lack the API these features call (an older one is treated as not installed)
+        public static readonly bool Installed =
+            Chainloader.PluginInfos.TryGetValue("com.kennerz.paphideoutmodule", out BepInEx.PluginInfo pap) && pap.Metadata.Version >= new System.Version(2, 0, 0);
 
         public static void Setup(Harmony harmony, GameObject host)
         {
@@ -180,6 +197,9 @@ namespace Raygun
 
         /// <summary>A Pack-a-Punched gun (Porter's X2). Never without PaP.</summary>
         public static bool IsInfused(Item item) => Installed && item != null && RaygunPaPBridge.IsInfused(item);
+
+        /// <summary>Upgraded in PaP's Origins machine.</summary>
+        public static bool IsOrigins(Item item) => Installed && item != null && RaygunPaPBridge.IsOrigins(item);
 
         public static int InfusedFeeRub => Installed ? RaygunPaPBridge.InfusedFeeRub : 0;
     }
@@ -223,6 +243,9 @@ namespace Raygun
                     if (m == null)
                         continue;
                     string name = Bare(m.name);
+                    // The dial keeps its own colours (needle and meter)
+                    if (name.Contains("meter") || name.Contains("needle"))
+                        continue;
                     bool isUp = name.EndsWith(Up);
                     string plainName = isUp ? name.Substring(0, name.Length - Up.Length) : name;
                     if (upgraded && !isUp && ups.TryGetValue(plainName + Up, out Material up))

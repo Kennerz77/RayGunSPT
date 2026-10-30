@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Raygun
 {
     /// <summary>Client side of the Ray Gun: the cell rules, the weapon rig fix, the menu pose (F12 tuning) and the inventory pictures.</summary>
-    [BepInPlugin(PluginGuid, "Kennerz-Raygun", "1.0.0")] // Forge rule: "Username-ModName"
+    [BepInPlugin(PluginGuid, "Kennerz-Raygun", "1.1.0")] // Forge rule: "Username-ModName"
     [BepInDependency("com.kennerz.paphideoutmodule", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(RaygunDraw.HideoutUncensoredGuid, "1.3.0")] // hard: the wall buy hands you the gun through it
     public class RaygunPlugin : BaseUnityPlugin

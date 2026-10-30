@@ -19,7 +19,7 @@ namespace Raygun
         private static readonly Dictionary<string, Texture2D> Images = new Dictionary<string, Texture2D>();
 
         // Bumped whenever the pictures change, so the game's disk cache of older ones (the white studio photos) is retired
-        private const int Salt = 0x52470002;
+        private const int Salt = 0x52470004;
 
         public static void Enable(Harmony harmony)
         {
@@ -32,7 +32,7 @@ namespace Raygun
         public static string ImageFor(Item item)
         {
             if (RaygunIds.Is(item))
-                return "raygun";
+                return RaygunPaP.IsInfused(item) ? (RaygunPaP.IsOrigins(item) ? "raygun_pap_origins" : "raygun_pap") : "raygun";
             if (RaygunIds.IsCell(item))
                 return "cell";
             return null;

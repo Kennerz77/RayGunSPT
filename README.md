@@ -2,7 +2,7 @@
 
 The **Ray Gun** from Call of Duty Zombies, in SPT. The BO3 HD model with its real first-person animations and sounds, fed by cold fusion cells, small enough for your holster, with a chalk wall buy in your hideout to get it. Pack-a-Punch it into **Porter's X2 Ray Gun**.
 
-Version 1.0.0, for **SPT 4.1.6**.
+Version 1.1.0, for **SPT 4.1.6**. Made by **Kennerz**.
 
 ## Requirements
 
@@ -15,7 +15,7 @@ Optional:
 
 | Mod | What it adds |
 |---|---|
-| Kennerz-PaPHideoutModule (by Kennerz, same author) | Pack-a-Punch the Ray Gun into **Porter's X2 Ray Gun**: red glow, twenty shots a cell (forty a load), a faster fire rate and red bolts. |
+| [Kennerz-PaPHideoutModule](https://github.com/Kennerz77/papHideoutModule) **2.0.0 or newer** (by Kennerz) | Pack-a-Punch the Ray Gun into **Porter's X2 Ray Gun**: red glow, twenty shots a cell (forty a load), a faster fire rate and red bolts. Older versions of it are ignored. |
 
 ## Installing
 
@@ -33,6 +33,8 @@ The mod gives you nothing for free and mails you nothing. Once your hideout's **
 - **The ammo case:** buy a full **Cold Fusion Cell** for **10,000 ₽**. It goes onto a part-filled stack of cells on you first, then into a free spot in your pockets, vest or backpack, and only then into your stash. (While a weapon is out in the hideout, it goes to the stash.)
 - Not enough money or no room: nothing is charged.
 
+The wall and the ammo case are the **only** way to get the Ray Gun and its cells: they're never on the flea market, at traders, in loot, on bots or in daily rewards.
+
 ## The gun
 
 - **Holster only:** a 2x1 sidearm, 1 kg empty and 1.15 kg loaded. Built on the sawed-off MP-43, so it has two chambers, a cell in each.
@@ -49,7 +51,9 @@ The mod gives you nothing for free and mails you nothing. Once your hideout's **
 
 - It goes into the machine as a plain Ray Gun and comes out as Porter's X2 once you take it: red tube, sight and gauge, red bolts, a black needle and camo on the body that leaves the gold print alone.
 - **Twenty shots a cell**, forty a load. A charge is spent every second shot. Only while a cell sits in the X2 does it say so: its name and description show out of 20. Taken out, it's an ordinary ten-shot cell.
-- A slightly faster fire rate.
+- A faster fire rate (x1.35).
+- Upgraded in PaP's **Origins** machine: the red body turns to flowing blue crystal and the dark parts to metal.
+- The dial keeps its normal colours.
 - Stripping its power makes it a Ray Gun again.
 
 ## Selling
@@ -87,4 +91,5 @@ Delete `BepInEx\plugins\Raygun\` and `SPT_Runtime\user\mods\Raygun\`. Your profi
 
 ## Changelog
 
+- **1.1.0:** the Ray Gun and its cells only come from the wall buy and the ammo case (never flea, traders, loot, bots or daily rewards); Porter's X2 fires faster; Pack-a-Punch camo works on the Ray Gun again; Origins camo support and its own inventory picture; the dial keeps its colours when upgraded; Sort joins full cells into stacks of six reliably; cold fusion cells never take a camo. Needs PaP Hideout Module 2.0.0 or newer for the Pack-a-Punch features.
 - **1.0.0:** first release.

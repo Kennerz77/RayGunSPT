@@ -52,10 +52,14 @@ namespace Raygun
                 for (int to = 0; to < stacks.Count; to++)
                 {
                     Item target = stacks[to];
+                    if (target.CurrentAddress == null || target.StackObjectsCount <= 0)
+                        continue; // already poured away
                     for (int from = stacks.Count - 1; from > to && target.StackObjectsCount < target.StackMaxSize; from--)
                     {
                         Item source = stacks[from];
-                        if (source.StackObjectsCount <= 0)
+                        try
+                        {
+                        if (source.StackObjectsCount <= 0 || source.CurrentAddress == null)
                             continue;
                         int room = target.StackMaxSize - target.StackObjectsCount;
                         if (source.StackObjectsCount <= room)
@@ -71,7 +75,16 @@ namespace Raygun
                         {
                             var transfer = ItemManipulator.TransferExact(source, room, target, controller, simulate: false);
                             if (transfer.Succeeded)
+                            {
                                 await controller.TryRunNetworkTransaction(transfer);
+                                if (source.StackObjectsCount <= 0 || source.CurrentAddress == null)
+                                    stacks.RemoveAt(from);
+                            }
+                        }
+                        }
+                        catch (System.Exception e)
+                        {
+                            RaygunPlugin.Log.LogWarning($"Joining one cell stack skipped: {e.Message}");
                         }
                     }
                 }

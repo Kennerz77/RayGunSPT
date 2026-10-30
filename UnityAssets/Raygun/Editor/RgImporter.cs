@@ -486,6 +486,85 @@ namespace Raygun.Editor
         private const int NeedleMaterialBase = 2000;
         private const string NeedleBone = "tag_arrow_animate", NeedlePrefix = "rg_needle_";
 
+        // The dial plate and the side vents share the body's mesh and material, so Pack-a-Punch's Origins camo couldn't
+        // tell them apart; their faces get material copies of their own (rg_plate_: metal under Origins, rg_dial_: the
+        // gauge's face, which keeps its plain look). Regions are in the side-on icon's pixels (1024 wide), see RgIcons
+        private const int DialMaterialBase = 4000, PlateMaterialBase = 5000;
+        private static float _bx0, _bx1, _bz0, _bz1;
+        private static bool _boundsKnown;
+
+        private static void KnownBounds(CodModel gun)
+        {
+            if (_boundsKnown)
+                return;
+            _boundsKnown = true;
+            var skip = new HashSet<int>(CellBones.Select(gun.BoneIndex));
+            _bx0 = _bz0 = float.MaxValue;
+            _bx1 = _bz1 = float.MinValue;
+            foreach (CodFace f in gun.Faces)
+            {
+                if (skip.Contains(FaceBone(gun, f)))
+                    continue;
+                foreach (CodCorner c in f.Corners)
+                {
+                    CodVec p = gun.Vertices[c.Vertex].Pos;
+                    _bx0 = Mathf.Min(_bx0, p.X); _bx1 = Mathf.Max(_bx1, p.X);
+                    _bz0 = Mathf.Min(_bz0, p.Z); _bz1 = Mathf.Max(_bz1, p.Z);
+                }
+            }
+        }
+
+        /// <summary>0 body, 1 gauge face, 2 plate or vents. By the face's place in the side-on icon.</summary>
+        // Under Origins the body's red takes the crystal and its black and grey the metal plating. Pack-a-Punch paints
+        // per material, so the body's faces that aren't red get their own copy (rg_plate_), by the colour under them
+        private static Texture2D _bodyColours;
+        private static string _bodyColoursPath;
+
+        private static bool IsRedFace(CodFace f, Material body)
+        {
+            string path = AssetDatabase.GetAssetPath(body.GetTexture("_MainTex"));
+            if (_bodyColours == null || _bodyColoursPath != path)
+            {
+                _bodyColours = new Texture2D(2, 2, TextureFormat.RGBA32, false, false);
+                _bodyColours.LoadImage(File.ReadAllBytes(path));
+                _bodyColoursPath = path;
+            }
+            float cu = f.Corners.Average(c => c.U), cv = f.Corners.Average(c => 1f - c.V);
+            int red = 0, total = 0;
+            foreach (var (u, v) in f.Corners.Select(c => (c.U * 0.7f + cu * 0.3f, (1f - c.V) * 0.7f + cv * 0.3f)).Append((cu, cv)))
+            {
+                Color.RGBToHSV(_bodyColours.GetPixelBilinear(u, v), out float hue, out float sat, out float val);
+                if ((hue < 0.05f || hue > 0.94f) && sat > 0.35f && val > 0.1f)
+                    red++;
+                total++;
+            }
+            return red * 2 >= total;
+        }
+
+        private static int Region(CodModel gun, CodFace f)
+        {
+            KnownBounds(gun);
+            float x = 0f, z = 0f, ny = 0f;
+            foreach (CodCorner c in f.Corners)
+            {
+                CodVec p = gun.Vertices[c.Vertex].Pos;
+                x += p.X / 3f;
+                z += p.Z / 3f;
+                ny += c.Normal.Y / 3f;
+            }
+            float wc = (_bx1 - _bx0) * 1.04f, hc = (_bz1 - _bz0) * 1.04f;
+            float height = 1024f * hc / wc;
+            float px = 512f - (x - (_bx0 + _bx1) / 2f) / wc * 1024f;
+            float py = height / 2f - (z - (_bz0 + _bz1) / 2f) / hc * height;
+            float dx = px - 840f, dy = py - 190f, r = Mathf.Sqrt(dx * dx + dy * dy);
+            // Metal under Origins (user's marks): the muzzle cone, the fin, the strip along the top, the lightning badge
+            // by the knob, and the plate under the gauge that houses the needle (its face only, not the disc's rim)
+            bool In(float x0, float y0, float x1, float y1) => px >= x0 && px <= x1 && py >= y0 && py <= y1;
+            if (In(85f, 130f, 210f, 245f) || In(275f, 80f, 410f, 170f))
+                return 2;
+            return 0;
+        }
+
         /// <summary>
         /// The cells' faces use copies of the gun's materials that Pack-a-Punch never paints (it skips the alpha-test
         /// queue up): a cell keeps its own look in an upgraded gun and loose.
@@ -500,7 +579,22 @@ namespace Raygun.Editor
                 bool isNeedle = faceBone == needle;
                 if (!cellBones.Contains(faceBone) && !isNeedle)
                 {
-                    yield return f;
+                    int region = gun.Materials[f.Material].Name.EndsWith("_plastic") && !IsRedFace(f, materials[f.Material]) ? 2 : 0;
+                    if (region == 0)
+                    {
+                        yield return f;
+                        continue;
+                    }
+                    int split = (region == 1 ? DialMaterialBase : PlateMaterialBase) + f.Material;
+                    if (!materials.ContainsKey(split))
+                    {
+                        string splitPath = $"{RgPaths.Materials}/{(region == 1 ? "rg_dial_" : "rg_plate_")}{gun.Materials[f.Material].Name}.mat";
+                        AssetDatabase.DeleteAsset(splitPath);
+                        var splitCopy = new Material(materials[f.Material]) { name = Path.GetFileNameWithoutExtension(splitPath) };
+                        AssetDatabase.CreateAsset(splitCopy, splitPath);
+                        materials[split] = splitCopy;
+                    }
+                    yield return new CodFace { Object = f.Object, Material = split, Corners = f.Corners };
                     continue;
                 }
                 // The dial's needle likewise keeps its own look (black on Porter's X2, see AddUpgradedMaterials)

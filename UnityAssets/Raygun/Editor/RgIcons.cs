@@ -35,6 +35,15 @@ namespace Raygun.Editor
                 {
                     rig.Add(camo);
                     RenderGun("raygun_pap", camo);
+                    Texture2D crystal = LoadTexture(OriginsCrystalPath), plating = LoadTexture(OriginsPlatingPath);
+                    if (crystal != null && plating != null)
+                    {
+                        rig.Add(crystal);
+                        rig.Add(plating);
+                        _crystal = crystal;
+                        _plating = plating;
+                        RenderGun("raygun_pap_origins", camo, origins: true);
+                    }
                 }
                 else
                 {
@@ -64,6 +73,48 @@ namespace Raygun.Editor
             }
         }
 
+        // Origins camo (PaP's): blue crystal on the body, metal plating on the bars, fins and small parts
+        private const string OriginsCrystalPath = @"C:\Git\PaPHideoutModule\UnityProject\Assets\PaP\Camo\origins_crystal_c.png";
+        private const string OriginsPlatingPath = @"C:\Git\PaPHideoutModule\UnityProject\Assets\PaP\Camo\origins_camo_c.png";
+        private static Texture2D _crystal, _plating;
+        private static readonly string[] MetalParts = { "knob", "switch" };
+
+        private static Texture2D LoadTexture(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Repeat };
+            tex.LoadImage(File.ReadAllBytes(path));
+            return tex;
+        }
+
+        // As PaP's Origins split: the body's red texels take the crystal, everything else the plating
+        private static readonly Dictionary<string, Texture2D> Splits = new Dictionary<string, Texture2D>();
+
+        private static Texture2D RedSplit(Material m)
+        {
+            string path = AssetDatabase.GetAssetPath(m.GetTexture("_MainTex"));
+            if (Splits.TryGetValue(path, out Texture2D done) && done != null)
+                return done;
+            var source = new Texture2D(2, 2, TextureFormat.RGBA32, false, false);
+            source.LoadImage(File.ReadAllBytes(path));
+            int w = Mathf.Min(1024, source.width), h = Mathf.Max(1, source.height * w / source.width);
+            var outTex = new Texture2D(w, h, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Repeat };
+            var pixels = new Color[w * h];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    float u = (x + 0.5f) / w, v = (y + 0.5f) / h;
+                    Color.RGBToHSV(source.GetPixelBilinear(u, v), out float hue, out float sat, out float val);
+                    bool red = (hue < 0.05f || hue > 0.94f) && sat > 0.35f && val > 0.1f;
+                    pixels[y * w + x] = (red ? _crystal : _plating).GetPixelBilinear(u, v);
+                }
+            outTex.SetPixels(pixels);
+            outTex.Apply(true);
+            Object.DestroyImmediate(source);
+            return Splits[path] = outTex;
+        }
+
         private static Texture2D LoadCamo()
         {
             if (!File.Exists(CamoAlbedo))
@@ -78,7 +129,7 @@ namespace Raygun.Editor
         /// model's root (tag_weapon): the barrel (CoD +X) along +Z, up (CoD +Z) along +Y, its left (CoD +Y) along -X.
         /// The fresh cell (hidden inside the gun at rest) is left out.
         /// </summary>
-        private static void RenderGun(string name, Texture2D camo)
+        private static void RenderGun(string name, Texture2D camo, bool origins = false)
         {
             GameObject go = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(RgImporter.WeaponPrefabPath));
             try
@@ -93,7 +144,7 @@ namespace Raygun.Editor
                 Transform fresh = go.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == RgImporter.CellBones[1]);
                 if (fresh != null)
                     fresh.gameObject.SetActive(false);
-                Dress(go, camo);
+                Dress(go, camo, origins);
                 Shoot(go, name, forward: Vector3.right, up: Vector3.up);
             }
             finally
@@ -137,8 +188,11 @@ namespace Raygun.Editor
         /// <summary>Degrees about the cell's long axis that bring its printed label round to the camera.</summary>
         private const float LabelTurn = 180f;
 
-        /// <summary>Copies of the model's materials, in camo where PaP would paint it.</summary>
-        private static void Dress(GameObject go, Texture2D camo)
+        /// <summary>
+        /// Copies of the model's materials. Pack-a-Punched (camo given): the "_up" glow materials swapped in (red tube and
+        /// sight) except the dial, which keeps its colours; the camo only on the body and the bars, as PaP paints them.
+        /// </summary>
+        private static void Dress(GameObject go, Texture2D camo, bool origins = false)
         {
             foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true))
             {
@@ -146,14 +200,29 @@ namespace Raygun.Editor
                 {
                     if (m == null)
                         return null;
-                    var copy = new Material(m);
-                    // As PaPCamo.ShouldPaint: nothing from the alpha-test queue up, nothing without a colour map
-                    if (camo != null && m.renderQueue < 2450 && m.HasProperty("_MainTex") && m.GetTexture("_MainTex") != null)
+                    Material source = m;
+                    if (camo != null && !m.name.Contains("meter") && !m.name.Contains("needle") && !m.name.EndsWith("_up"))
                     {
-                        copy.SetTexture("_MainTex", camo);
+                        var up = AssetDatabase.LoadAssetAtPath<Material>($"Assets/Raygun/Materials/{m.name}_up.mat");
+                        if (up != null)
+                            source = up;
+                    }
+                    var copy = new Material(source);
+                    bool dial = m.name.StartsWith("rg_dial_");
+                    bool plate = m.name.StartsWith("rg_plate_");
+                    bool body = m.name == "mtl_wpn_t7_zmb_raygun_metal" || m.name == "mtl_wpn_t7_zmb_raygun_plastic"
+                                || dial || plate;
+                    bool metalPart = origins && !m.name.Contains("meter") && MetalParts.Any(w => r.name.Contains(w));
+                    if (camo != null && (body || metalPart) && m.renderQueue <= 2450 && m.HasProperty("_MainTex") && m.GetTexture("_MainTex") != null)
+                    {
+                        Texture2D skin = !origins ? camo : metalPart || m.name.EndsWith("_metal") ? _plating
+                            : m.name.StartsWith("rg_plate_") ? _plating : _crystal;
+                        copy.SetTexture("_MainTex", skin);
                         copy.SetTextureScale("_MainTex", Vector2.one * CamoTiling);
                         copy.color = Color.white;
-                        copy.SetTexture("_EmissionMap", camo);
+                        if (copy.HasProperty("_Glossiness"))
+                            copy.SetFloat("_Glossiness", 0.45f);
+                        copy.SetTexture("_EmissionMap", skin);
                         copy.SetTextureScale("_EmissionMap", Vector2.one * CamoTiling);
                         copy.SetColor("_EmissionColor", new Color(CamoEmission, CamoEmission, CamoEmission));
                         copy.EnableKeyword("_EMISSION");
