@@ -1099,7 +1099,7 @@ namespace Raygun.Editor
         // ---------- Sounds ----------
 
         /// <summary>
-        /// BO3's Ray Gun sounds (pulled out of the game's sound banks by C:\Git\Tools\bo3_sab_extract.py into
+        /// BO3's Ray Gun sounds (pulled out of the game's sound banks by C:\Git\99_Tools\bo3_sab_extract.py into
         /// sounds_bo3\), each named after its file. A file in sounds_custom named like a sound replaces it.
         /// </summary>
         private static Dictionary<string, AudioClip> ImportSounds()

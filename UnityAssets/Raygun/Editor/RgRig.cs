@@ -11,10 +11,10 @@ namespace Raygun.Editor
     {
         // Only the arms rig comes from here: the BO1 arms-rig port (am_t5_thundergun: CoD's standard
         // viewmodel arm bones, the hierarchy above the arms that Greyhound's SEAnims leave out)
-        public const string PortRoot = @"C:\Git\Source Codes\t5_thundergun 2\t5_thundergun";
+        public const string PortRoot = @"C:\Git\2_References\t5_thundergun 2\t5_thundergun";
         public static readonly string ModelDir = Directory.GetFiles(PortRoot + @"\model_export", "am_t5_thundergun.xmodel_bin",
             SearchOption.AllDirectories).Select(f => Path.GetDirectoryName(f)).FirstOrDefault();
-        // BO3's Ray Gun sounds, pulled from the game's sound banks by C:\Git\Tools\bo3_sab_extract.py
+        // BO3's Ray Gun sounds, pulled from the game's sound banks by C:\Git\99_Tools\bo3_sab_extract.py
         public static string Bo3SoundDir => Path.GetFullPath(Path.Combine(Application.dataPath, "../../sounds_bo3"));
 
         public const string Root = "Assets/Raygun";
@@ -33,7 +33,7 @@ namespace Raygun.Editor
 
         /// <summary>
         /// The vanilla gun whose rig, controller, events and components the Ray Gun is built on: the sawed-off MP-43
-        /// (two chambers loaded like shells). Dumped by C:\Git\Tools\eft_weapon_dump.py into reference/mr43_*.json.
+        /// (two chambers loaded like shells). Dumped by C:\Git\99_Tools\eft_weapon_dump.py into reference/mr43_*.json.
         /// </summary>
         public const string BaseGun = "mr43";
         /// <summary>Owner names in the components dump: the container and the first-person model.</summary>

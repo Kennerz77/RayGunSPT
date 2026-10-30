@@ -16,7 +16,7 @@ namespace Raygun.Editor
         public static string IconsDir => Path.GetFullPath(Path.Combine(Application.dataPath, "../../icons"));
 
         // PaP's camo albedo (read only, never changed) and the tiling PaP paints it with
-        private const string CamoAlbedo = @"C:\Git\PaPHideoutModule\UnityProject\Assets\PaP\Camo\pap_camo_albedo.png";
+        private const string CamoAlbedo = @"C:\Git\3_Working\PaPHideoutModule\UnityProject\Assets\PaP\Camo\pap_camo_albedo.png";
         private const float CamoTiling = 1f;
         private const float CamoEmission = 0.06f;
 
@@ -74,8 +74,8 @@ namespace Raygun.Editor
         }
 
         // Origins camo (PaP's): blue crystal on the body, metal plating on the bars, fins and small parts
-        private const string OriginsCrystalPath = @"C:\Git\PaPHideoutModule\UnityProject\Assets\PaP\Camo\origins_crystal_c.png";
-        private const string OriginsPlatingPath = @"C:\Git\PaPHideoutModule\UnityProject\Assets\PaP\Camo\origins_camo_c.png";
+        private const string OriginsCrystalPath = @"C:\Git\3_Working\PaPHideoutModule\UnityProject\Assets\PaP\Camo\origins_crystal_c.png";
+        private const string OriginsPlatingPath = @"C:\Git\3_Working\PaPHideoutModule\UnityProject\Assets\PaP\Camo\origins_camo_c.png";
         private static Texture2D _crystal, _plating;
         private static readonly string[] MetalParts = { "knob", "switch" };
 
