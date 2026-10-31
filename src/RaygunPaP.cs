@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -84,7 +84,7 @@ namespace Raygun
                     return;
                 // No item: the machine's display gun going in or out, plain
                 bool upgraded = item != null && (force ?? IsInfused(item));
-                RaygunGlow.Set(go, upgraded);
+                RaygunGlow.Set(go, upgraded, upgraded && IsOrigins(item));
                 // Photo models (forced) go straight back to the pool; the rest are kept right (RaygunGlowKeeper)
                 if (force == null && item != null)
                     RaygunGlowKeeper.Models[go] = item;
@@ -126,7 +126,8 @@ namespace Raygun
             {
                 try
                 {
-                    RaygunGlow.Set(pair.Key, RaygunPaPBridge.IsInfused(pair.Value));
+                    bool upgraded = RaygunPaPBridge.IsInfused(pair.Value);
+                    RaygunGlow.Set(pair.Key, upgraded, upgraded && RaygunPaPBridge.IsOrigins(pair.Value));
                 }
                 catch (Exception e)
                 {
@@ -222,7 +223,14 @@ namespace Raygun
             ? new Dictionary<string, Material>()
             : holder.sharedMaterials.Where(m => m != null).GroupBy(m => m.name).ToDictionary(g => g.Key, g => g.First());
 
-        public static void Set(GameObject model, bool upgraded)
+        // On a gun from PaP's Origins machine the tube and the sight glow deep red (as in BO2's Origins): the tube is a
+        // copy of the plain tube (its moving plasma, which RaygunPlasma animates by name) turned deep red, the sight a
+        // deep red copy of the upgraded one. Named with this tag
+        private const string OriginsTag = " (ori)";
+        private static readonly string[] OriginsGlowParts = { "power", "reticle" };
+        private static readonly Dictionary<Material, Material> OriginsCopies = new Dictionary<Material, Material>();
+
+        public static void Set(GameObject model, bool upgraded, bool origins = false)
         {
             Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
             Renderer holder = renderers.FirstOrDefault(r => r.name == Holder);
@@ -242,26 +250,50 @@ namespace Raygun
                     Material m = mats[i];
                     if (m == null)
                         continue;
-                    string name = Bare(m.name);
+                    string current = Bare(m.name);
                     // The dial keeps its own colours (needle and meter)
-                    if (name.Contains("meter") || name.Contains("needle"))
+                    if (current.Contains("meter") || current.Contains("needle"))
                         continue;
+                    string name = current.EndsWith(OriginsTag) ? current.Substring(0, current.Length - OriginsTag.Length) : current;
                     bool isUp = name.EndsWith(Up);
                     string plainName = isUp ? name.Substring(0, name.Length - Up.Length) : name;
-                    if (upgraded && !isUp && ups.TryGetValue(plainName + Up, out Material up))
-                    {
-                        mats[i] = up;
-                        changed = true;
-                    }
+                    Material want = null;
+                    if (upgraded && ups.TryGetValue(plainName + Up, out Material up))
+                        want = origins && OriginsGlowParts.Any(plainName.Contains)
+                            ? OriginsCopy(up, plains.TryGetValue(plainName, out Material plainTube) && plainName.Contains("power") ? plainTube : null)
+                            : up;
                     else if (!upgraded && isUp && plains.TryGetValue(plainName, out Material plain))
+                        want = plain;
+                    // Compared by name: the game may draw its own copy of ours, which must not be swapped every check
+                    if (want != null && want.name != current)
                     {
-                        mats[i] = plain;
+                        mats[i] = want;
                         changed = true;
                     }
                 }
                 if (changed)
                     r.sharedMaterials = mats;
             }
+        }
+
+        /// <param name="plain">The plain tube, whose moving plasma the Origins tube keeps; null for the sight.</param>
+        private static Material OriginsCopy(Material up, Material plain)
+        {
+            if (OriginsCopies.TryGetValue(up, out Material done) && done != null)
+                return done;
+            var copy = new Material(plain != null ? plain : up) { name = up.name + OriginsTag };
+            copy.SetColor("_Color", DeepRed(copy.GetColor("_Color"), 0.5f));
+            copy.SetColor("_EmissionColor", plain != null ? DeepRed(copy.GetColor("_EmissionColor"), 1f) : new Color(1.6f, 0.05f, 0.03f, 1f));
+            copy.EnableKeyword("_EMISSION");
+            OriginsCopies[up] = copy;
+            return copy;
+        }
+
+        /// <summary>The same brightness (times <paramref name="scale"/>) as a deep red, same alpha.</summary>
+        private static Color DeepRed(Color c, float scale)
+        {
+            float b = Mathf.Max(c.r, c.g, c.b) * scale;
+            return new Color(b, b * 0.04f, b * 0.025f, c.a);
         }
     }
 
