@@ -28,13 +28,19 @@ namespace Raygun
                 new HarmonyMethod(typeof(RaygunAim).GetMethod(nameof(ShotPrefix), BindingFlags.Static | BindingFlags.NonPublic)));
         }
 
-        private static void ShotPrefix(Player.FirearmController __instance, Weapon weapon)
+        private static void ShotPrefix(Player.FirearmController __instance, Weapon weapon, int chamberIndex)
         {
             try
             {
                 if (!RaygunSettings.AimAtCentre.Value || !RaygunIds.Is(weapon) || !(_player?.GetValue(__instance) is Player player) || !player.IsYourPlayer)
                     return;
-                Transform muzzle = __instance.CurrentFireport?.Original;
+                // The Ray Gun has two chambers, so EFT fires from each chamber's own fireport. Shot only switches to the
+                // firing chamber after this runs: the fireport is picked by the chamber being fired, not the current one
+                BifacialTransform fireport = weapon.IsMultiBarrel && __instance.MultiBarrelsFireports != null && chamberIndex >= 0
+                                             && chamberIndex < __instance.MultiBarrelsFireports.Length
+                    ? __instance.MultiBarrelsFireports[chamberIndex]
+                    : __instance.Fireport;
+                Transform muzzle = fireport?.Original;
                 Camera cam = Camera.main;
                 if (muzzle == null || cam == null)
                     return;
@@ -47,7 +53,9 @@ namespace Raygun
                                        + cam.transform.up * (RaygunSettings.SightShotUp.Value * 0.001f)).normalized;
                 }
                 Vector3 target = AimPoint(from, forward);
-                Vector3 want = target - muzzle.position;
+                // From where EFT really fires: the fireport's projected position (BifacialTransform.position), not the
+                // muzzle bone. They differ by the view's offset and tilt, which bent hip shots off the centre
+                Vector3 want = target - fireport.position;
                 Vector3 now = muzzle.TransformDirection(player.LocalShotDirection);
                 if (want.sqrMagnitude < 1e-6f || now.sqrMagnitude < 1e-6f)
                     return;

@@ -13,21 +13,13 @@ namespace Raygun
     }
 
     /// <summary>
-    /// The Ray Gun's numbers, fixed at the values tuned in playtesting (2026-10-28): how it sits in the hands, how it
-    /// aims, and how the menu character holds it. Only the volumes are in the F12 menu.
+    /// The Ray Gun's numbers, fixed at the values tuned in playtesting (2026-10-28): how it aims and how the menu
+    /// character holds it. The volumes are in the F12 menu; the size and fit are in <see cref="RaygunFit"/>.
     /// </summary>
     internal static class RaygunSettings
     {
-        // The menu character's hold: the gun hung off the right hand, moved and turned about it
-        public static readonly Fixed<MenuBodyPose> MenuBody = new Fixed<MenuBodyPose>(MenuBodyPose.Rifle);
+        // The menu character's hold: the gun hung off the right hand, moved and turned about it (RaygunFit)
         public static readonly Fixed<bool> MenuLeftHand = new Fixed<bool>(false), MenuLeftPlaced = new Fixed<bool>(true);
-
-        // Where the left hand goes when it's off the gun, from the left shoulder (cm)
-        private static readonly Vector3 LeftHandCm = new Vector3(8.169f, -20.282f, 37.934f);
-
-        // First person: the gun in the hands (cm right, up, forward; degrees)
-        private static readonly Vector3 ViewCm = new Vector3(0.4225f, -0.9859f, -0.3756f);
-        private const float Pitch = 5.3521f, Yaw = -4.2254f, Roll = 0f;
 
         // Aiming: shots leave for the screen centre (through the ring sight when aiming); the eye looks through the rear hoop
         public static readonly Fixed<bool> AimAtCentre = new Fixed<bool>(true), AimThroughSight = new Fixed<bool>(true), AimThroughHoop = new Fixed<bool>(true);
@@ -46,6 +38,7 @@ namespace Raygun
             PurchaseVolume = config.Bind(audio, "Purchase", 0.8f, Volume("BO3's \"cha-ching\" when you buy from the wall or the ammo box."));
             WallBuyVolume = config.Bind(audio, "Wall buy", 0.8f, Volume("The sound of the gun coming out of the chalk wall."));
             DenyVolume = config.Bind(audio, "Deny", 0.8f, Volume("BO3's buzz when a purchase is refused (not enough money, no room)."));
+            RaygunFit.Bind(config);
             DropOldEntries(config);
         }
 
@@ -72,21 +65,18 @@ namespace Raygun
         private static ConfigDescription Volume(string description) => new ConfigDescription(description, new AcceptableValueRange<float>(0f, 1f));
 
         /// <summary>Where the placed left hand goes, from the left shoulder in the character's frame, metres.</summary>
-        public static Vector3 LeftHandOffset => LeftHandCm * 0.01f;
+        public static Vector3 LeftHandOffset => RaygunFit.MenuLeftHand;
 
         /// <summary>The view offset in the weapon root's space (EFT's weapon space: +X right, -Y forward, +Z up), metres.</summary>
-        public static Vector3 ViewOffset => new Vector3(ViewCm.x, -ViewCm.z, ViewCm.y) * 0.01f;
+        public static Vector3 ViewOffset => RaygunFit.ViewOffset;
 
-        public static Quaternion ViewRotation => Quaternion.Euler(Pitch, Roll, -Yaw);
-
-        /// <summary>The aim camera sits right behind the ring sight (import); nothing to add.</summary>
-        public static Vector3 AimOffset => Vector3.zero;
+        public static Quaternion ViewRotation => RaygunFit.ViewRotation;
 
         /// <summary>The menu hold's offset in the character's frame (x right, y up, z forward), metres.</summary>
-        public static Vector3 MenuShift => new Vector3(-14.225f, 2.676f, 20.986f) * 0.01f;
+        public static Vector3 MenuShift => RaygunFit.MenuShift;
 
         /// <summary>The menu hold's turn in the character's frame.</summary>
-        public static Quaternion MenuTurn => Quaternion.Euler(13.099f, 37.183f, -26.620f);
+        public static Quaternion MenuTurn => RaygunFit.MenuTurn;
     }
 
     /// <summary>The menu character's body hold (the game's weapon types for its animator: 0 rifle, 1 pistol).</summary>

@@ -90,6 +90,7 @@ namespace Raygun
         private class Holding : MonoBehaviour
         {
             public MenuPlayerPoser Poser;
+            public Transform Model;
             public Transform RightMarker;
 
             public void Place()
@@ -97,6 +98,8 @@ namespace Raygun
                 Transform root = Poser?.PBones?.Weapon_Root_Anim;
                 if (root == null || RightMarker == null)
                     return;
+                // Sized first, about the right hand (which stays put), so the hold below is the same at any size
+                RaygunFit.ApplyMenu(Model, root);
                 Quaternion body = Poser.transform.rotation;
                 Vector3 pivot = RightMarker.position;
                 // Turned in the body's frame about the right hand, then shifted in the body's frame
@@ -148,7 +151,7 @@ namespace Raygun
                 Animator body = poser?.GetComponent<Animator>();
                 if (body != null)
                 {
-                    int type = (int)RaygunSettings.MenuBody.Value;
+                    int type = (int)RaygunFit.MenuBody.Value;
                     body.SetInteger(PlayerAnimator.WEAPON_TYPE, type);
                     body.SetFloat(PlayerAnimator.WEAPON_TYPE_FLOAT_HASH, type);
                     body.SetFloat(PlayerAnimator.UI_WEAPON_TYPE, type);
@@ -168,6 +171,7 @@ namespace Raygun
                     return;
                 hold = hold ?? poser.gameObject.AddComponent<Holding>();
                 hold.Poser = poser;
+                hold.Model = animator.transform;
                 Transform[] all = animator.GetComponentsInChildren<Transform>(true);
                 hold.RightMarker = all.FirstOrDefault(t => t.name == "weapon_R_IK_marker") ?? all.FirstOrDefault(t => t.name == "weapon_R_hand_marker");
                 if (poser.PBones != null)

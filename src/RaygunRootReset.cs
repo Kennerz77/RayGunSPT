@@ -13,7 +13,7 @@ namespace Raygun
     /// clips never rotate Weapon_root_anim (the gun moves through the weapon bone below it), so resetting it to rest
     /// here is exactly what the animation should do. Only Ray Gun rigs are touched.
     /// The rest pose carries the view fit from the F12 "View position" and "Aiming" sliders (defaults: the fit tuned
-    /// in game, 2026-10-27). Aiming turns the gun so the eye looks through the rear hoop ("rg_hoop") at the ring
+    /// in game, 2026-10-27), and the gun is sized by <see cref="RaygunFit"/>. Aiming turns the gun so the eye looks through the rear hoop ("rg_hoop") at the ring
     /// sight ("rg_sight"), and seats the aim camera on that line.
     /// </summary>
     internal static class RaygunRootReset
@@ -46,12 +46,13 @@ namespace Raygun
             float ease = _aim * _aim * (3f - 2f * _aim);
             rootAnim.localRotation = Quaternion.Slerp(RaygunSettings.ViewRotation, Quaternion.identity, ease);
             rootAnim.localPosition = RestOf(rootAnim) + RaygunSettings.ViewOffset;
+            RaygunFit.ApplyView(rootAnim);
             RaygunPower.Update(rootAnim.root);
             QuickenX2Fire(__instance, rootAnim.root);
             Transform aim = rootAnim.Find("weapon/aim_camera");
             if (aim == null)
                 return;
-            aim.localPosition = RestOf(aim) + RaygunSettings.AimOffset;
+            aim.localPosition = RestOf(aim) + RaygunFit.AimShift(aim.parent, rootAnim.parent);
             if (ease > 0f && RaygunSettings.AimThroughHoop.Value)
                 LineUpHoop(rootAnim, aim, ease);
         }
@@ -109,7 +110,7 @@ namespace Raygun
             hoop = _hoop.position + weapon.TransformVector(new Vector3(0f, 0f, RaygunSettings.HoopUp.Value * 0.01f));
             Vector3 dir = (_sight.position - hoop).normalized;
             float back = Vector3.Distance(weapon.TransformPoint(RestOf(aim)), _sight.position);
-            Vector3 eye = weapon.InverseTransformPoint(_sight.position - dir * back) + RaygunSettings.AimOffset;
+            Vector3 eye = weapon.InverseTransformPoint(_sight.position - dir * back) + RaygunFit.AimShift(weapon, rootAnim.parent);
             aim.localPosition = Vector3.Lerp(aim.localPosition, eye, ease);
         }
 
