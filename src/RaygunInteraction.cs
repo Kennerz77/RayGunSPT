@@ -22,6 +22,9 @@ namespace Raygun
         private readonly List<InteractionAction> _stale = new List<InteractionAction>();
         private string _signature;
         private HideoutPlayerOwner _owner;
+        // Something nearer than the station by less than this doesn't block it
+        private const float BlockMargin = 0.3f;
+
         private bool _looking;
         private float _nextCheck;
 
@@ -111,15 +114,20 @@ namespace Raygun
             Ray ray = camera.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f));
             int count = Physics.RaycastNonAlloc(ray, _hits, distance, ~0, QueryTriggerInteraction.Ignore);
 
-            RaycastHit? nearest = null;
+            // The station's own collider, if the ray hits it; anything else only counts if it's clearly in front (another
+            // mod's prop or a stray collider overlapping the station mustn't take the prompt away)
+            float? ours = null, other = null;
             for (int i = 0; i < count; i++)
             {
                 if (_hits[i].collider.transform.IsChildOf(player))
                     continue;
-                if (!nearest.HasValue || _hits[i].distance < nearest.Value.distance)
-                    nearest = _hits[i];
+                float d = _hits[i].distance;
+                if (_hits[i].collider.transform.IsChildOf(target))
+                    ours = ours.HasValue ? Mathf.Min(ours.Value, d) : d;
+                else
+                    other = other.HasValue ? Mathf.Min(other.Value, d) : d;
             }
-            return nearest.HasValue && nearest.Value.collider.transform.IsChildOf(target);
+            return ours.HasValue && (!other.HasValue || other.Value > ours.Value - BlockMargin);
         }
     }
 }

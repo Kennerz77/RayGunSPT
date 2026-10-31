@@ -2,7 +2,7 @@
 
 The **Ray Gun** from Call of Duty Zombies, in SPT. The BO3 HD model with its real first-person animations and sounds, fed by cold fusion cells, small enough for your holster, with a chalk wall buy in your hideout to get it. Pack-a-Punch it into **Porter's X2 Ray Gun**.
 
-Version 1.1.2, for **SPT 4.1.6**. Made by **Kennerz**.
+Version 1.1.3, for **SPT 4.1.6**. Made by **Kennerz**.
 
 ## Requirements
 
@@ -96,6 +96,7 @@ Delete `BepInEx\plugins\Raygun\` and `SPT_Runtime\user\mods\Raygun\`. Your profi
 
 ## Changelog
 
+- **1.1.3:** the ammo box prompt now sits on the box itself, and other mods lying nearby no longer take it away.
 - **1.1.2:** a Size option in F12. Default is a little smaller with a better hand fit, and Large is the old size. The hand stays on the grip while you inspect the gun. Shots from the hip now land in the middle of the screen (they went slightly high).
 - **1.1.1:** Origins look: the tube shows its moving plasma in deep red and the sight glows plain deep red (the dial face turns to metal with PaP 2.1.0); the glow no longer swaps back and forth.
 - **1.1.0:** the Ray Gun and its cells only come from the wall buy and the ammo case (never flea, traders, loot, bots or daily rewards); Porter's X2 fires faster; Pack-a-Punch camo works on the Ray Gun again; Origins camo support and its own inventory picture; the dial keeps its colours when upgraded; Sort joins full cells into stacks of six reliably; cold fusion cells never take a camo. Needs PaP Hideout Module 2.0.0 or newer for the Pack-a-Punch features.

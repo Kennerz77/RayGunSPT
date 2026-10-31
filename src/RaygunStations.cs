@@ -199,6 +199,10 @@ namespace Raygun
                     SizeChalk(chalk, length);
             }, loaded: true));
             _box = Root(BoxName, boxAt);
+            // Hit area from the start, so the prompt never depends on the case model loading (or loading oddly)
+            var fallback = _box.gameObject.AddComponent<BoxCollider>();
+            fallback.center = new Vector3(0f, BoxFallbackSize.y * 0.5f, 0f);
+            fallback.size = BoxFallbackSize;
             StartCoroutine(Model(AmmoCaseTpl, _box, model => FitCollider(_box, model)));
             RaygunPlugin.Log.LogInfo("Hideout stations set out");
         }
@@ -336,14 +340,24 @@ namespace Raygun
             model.transform.localPosition = -(lay * bounds.center);
         }
 
+        // The ammunition case is about 0.4 x 0.2 x 0.3 m: a little roomier, standing on the floor
+        private static readonly Vector3 BoxFallbackSize = new Vector3(0.5f, 0.3f, 0.4f);
+
         private static void FitCollider(Transform root, GameObject model)
         {
             model.transform.SetParent(root, false);
             model.transform.localPosition = Vector3.zero;
             model.transform.localRotation = Quaternion.identity;
             Bounds bounds = WorldBounds(model);
+            Vector3 centre = root.InverseTransformPoint(bounds.center);
+            bool sane = bounds.size.x > 0.1f && bounds.size.y > 0.05f && bounds.size.z > 0.1f
+                && bounds.size.x < 0.9f && bounds.size.y < 0.9f && bounds.size.z < 0.9f && centre.magnitude < 0.6f;
+            RaygunPlugin.Log.LogInfo($"Ammo box model measured {bounds.size.x:F2} x {bounds.size.y:F2} x {bounds.size.z:F2} m at {centre}: " +
+                (sane ? "used for the hit area" : "odd, the fixed hit area stays"));
+            if (!sane)
+                return;
             var box = root.gameObject.GetComponent<BoxCollider>() ?? root.gameObject.AddComponent<BoxCollider>();
-            box.center = root.InverseTransformPoint(bounds.center);
+            box.center = centre;
             box.size = bounds.size;
         }
 
